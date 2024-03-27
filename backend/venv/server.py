@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify, send_from_directory
-#from flask_cors import CORS  # Import CORS
+from flask_cors import CORS  # Import CORS
 import json
 import os
 
 app = Flask(__name__)
-#CORS(app)  # Enable CORS for all domains on all routes
+CORS(app)  # Enable CORS for all domains on all routes
 
 def load_products():
     with open('products.json', 'r') as f:
