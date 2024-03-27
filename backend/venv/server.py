@@ -1,14 +1,16 @@
 from flask import Flask, request, jsonify, send_from_directory
-#from flask_cors import CORS  # Import CORS
+from flask_cors import CORS  # Import CORS
 import json
 import os
 
 app = Flask(__name__)
-#CORS(app)  # Enable CORS for all domains on all routes
+CORS(app)  # Enable CORS for all domains on all routes
+
 
 def load_products():
     with open('products.json', 'r') as f:
         return json.load(f)['products']
+
 
 @app.route('/products', methods=['GET'])
 @app.route('/products/<int:product_id>', methods=['GET'])
@@ -23,6 +25,7 @@ def get_products(product_id=None):
         # Note: You might want to change this if you want to return a single product not wrapped in a list
         return jsonify(product) if product else ('', 404)
 
+
 @app.route('/products/add', methods=['POST'])
 def add_product():
     new_product = request.json
@@ -32,6 +35,7 @@ def add_product():
     with open('products.json', 'w') as f:
         json.dump({"products": products}, f)
     return jsonify(new_product), 201
+
 
 @app.route('/products/<int:product_id>', methods=['PUT'])
 def update_product(product_id):
@@ -50,10 +54,12 @@ def update_product(product_id):
 
     return jsonify(product), 200
 
+
 @app.route('/products/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
     products = load_products()
-    product_index = next((i for i, p in enumerate(products) if p['id'] == product_id), None)
+    product_index = next((i for i, p in enumerate(
+        products) if p['id'] == product_id), None)
     if product_index is None:
         return jsonify({'error': 'Product not found'}), 404
 
@@ -66,9 +72,11 @@ def delete_product(product_id):
 
     return jsonify({'message': 'Product deleted successfully'}), 200
 
+
 @app.route('/product-images/<path:filename>')
 def get_image(filename):
     return send_from_directory('product-images', filename)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
